@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@repo/services": "workspace:*",
-    "@trpc/client": "^11.8.1",
-    "@trpc/server": "^11.8.1",
-    "trpc-to-openapi": "^3.1.0",
-    "zod": "^4.3.5"
+    "@trpc/client": "^11.19.0",
+    "@trpc/server": "^11.19.0",
+    "trpc-to-openapi": "^3.3.0",
+    "zod": "^4.6.5"
   }
 }
