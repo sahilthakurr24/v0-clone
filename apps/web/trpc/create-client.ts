@@ -1,4 +1,4 @@
-import { httpLink, httpBatchStreamLink } from "@repo/trpc/client";
+import { httpBatchLink, httpBatchStreamLink } from "@repo/trpc/client";
 import { env } from "~/env.js";
 
 interface CreateTRPCHttpBatchClientClientOpts {
@@ -7,17 +7,13 @@ interface CreateTRPCHttpBatchClientClientOpts {
 }
 
 export const createTRPCHttpBatchClientClient = (opts?: CreateTRPCHttpBatchClientClientOpts) => {
-  console.log("🔥 TRPC CLIENT CREATED");
-  const c = opts?.enableStreaming ? httpBatchStreamLink : httpLink;
- 
+  const c = opts?.enableStreaming ? httpBatchStreamLink : httpBatchLink;
+
   return c({
-    // Server-side fetch requires an absolute URL. The API runs on port 8000
-    // locally; deployments should provide NEXT_PUBLIC_API_URL instead.
     url: env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/trpc",
     headers: async () => {
-      console.log("🔥 HEADERS FUNCTION CALLED");
       const token = (await opts?.getToken?.()) ?? null;
-      console.log("🔥 TOKEN EXISTS:", !!token);
+
       if (!token) {
         return {};
       }
@@ -25,6 +21,19 @@ export const createTRPCHttpBatchClientClient = (opts?: CreateTRPCHttpBatchClient
       return {
         authorization: `Bearer ${token}`,
       };
+    },
+    fetch: async (input, init) => {
+      const token = (await opts?.getToken?.()) ?? null;
+      const headers = new Headers(init?.headers ?? {});
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return fetch(input, {
+        ...init,
+        headers,
+      });
     },
   });
 };
