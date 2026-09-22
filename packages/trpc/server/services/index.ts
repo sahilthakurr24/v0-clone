@@ -1,3 +1,3 @@
-// import UserService from "@repo/services/user";
+import ProjectService from "@repo/services/projects";
 
-// export const userService = new UserService();
+export const projectService = new ProjectService();
