@@ -11,6 +11,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@repo/inngest" : "workspace:*",
     "@swc/core": "^1.16.2",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",

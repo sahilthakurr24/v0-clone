@@ -5,9 +5,10 @@ import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { generateOpenApiDocument, createOpenApiExpressMiddleware } from "trpc-to-openapi";
 import { apiReference } from "@scalar/express-api-reference";
+import { inngest, serve } from "@repo/inngest";
+import {functions} from "@repo/inngest/functions"
 
 import { serverRouter, createContext } from "@repo/trpc/server";
-
 import { env } from "./env";
 
 export const app = express();
@@ -26,6 +27,9 @@ if (env.NODE_ENV !== "prod") {
 }
 
 app.use(express.json());
+
+//inngest route
+app.use("/api/inngest", serve({ client: inngest, functions }));
 
 app.get("/", (req, res) => {
   return res.json({ message: "Streamyst is up and running..." });
