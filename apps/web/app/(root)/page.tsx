@@ -1,8 +1,9 @@
-
+"use client";
 import { GlassNavbar } from "@/components/home/glass-navbar";
 import { HomeBackground } from "@/components/home/home-background";
 // import { ProjectGrid } from "@/components/home/project-grid";
 import { PromptInput } from "@/components/home/prompt-input";
+import { trpc } from "@/trpc/client";
 
 // import { ProjectGrid } from "@/features/projects/components/project-grid";
 
@@ -13,9 +14,7 @@ import { PromptInput } from "@/components/home/prompt-input";
  * starting a new build, and the grid of the user's existing projects.
  */
 export default function Home() {
-
   return (
-
     <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
       <HomeBackground />
       <GlassNavbar />

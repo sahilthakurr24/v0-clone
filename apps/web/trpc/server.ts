@@ -6,7 +6,6 @@ import { createTRPCHttpBatchClientClient } from "~/trpc/create-client";
 const getToken = async () => {
   const { getToken: getClerkToken } = await auth();
   const token = await getClerkToken();
-  console.log("TOKEN FROM AUTH:", !!token);
   return token;
 };
 
