@@ -1,5 +1,5 @@
 "use server";
-import { currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@repo/auth/nextjs";
 import { db, eq, schema } from "@repo/database";
 
 export async function onboardUser() {

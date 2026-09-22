@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider } from "@repo/auth/provider";
 import { GlobalProviders } from "~/providers/global";
 import { Inter } from "next/font/google";
 import { cn } from "~/lib/utils";

@@ -5,6 +5,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import React, { useState } from "react";
 import { Toaster } from "~/components/ui/sonner";
 
+import { getToken } from "@repo/auth/provider";
 import { trpc } from "~/trpc/client";
 import { createTRPCHttpBatchClientClient } from "~/trpc/create-client";
 
@@ -20,7 +21,7 @@ const queryClient = new QueryClient({
 export const GlobalProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [trpcClient] = useState(() =>
     trpc.createClient({
-      links: [createTRPCHttpBatchClientClient()],
+      links: [createTRPCHttpBatchClientClient({ getToken })],
     }),
   );
   return (

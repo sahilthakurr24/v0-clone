@@ -1,0 +1,21 @@
+{
+  "name": "@repo/auth",
+  "version": "1.0.0",
+  "private": "true",
+  "exports" :{
+    "./provider" : "./nextjs-client.ts",
+    "./buttons" : "./buttons.ts",
+    "./express" : "./express.ts",
+    "./nextjs" : "./nextjs-server.ts"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "dotenv-cli": "^11.0.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@clerk/express": "^2.1.69",
+    "@clerk/nextjs": "^7.9.4"
+  }
+}

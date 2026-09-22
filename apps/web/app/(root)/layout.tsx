@@ -1,11 +1,12 @@
 import { onboardUser } from "@/actions/getCurrent-user";
+import { useAuth } from "@repo/auth/provider";
 
 export default async function RootGroupLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    await onboardUser();
+  await onboardUser();
 
-    return children
+  return children;
 }

@@ -1,4 +1,4 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import {clerkMiddleware} from "@repo/auth/nextjs"
 
 export default clerkMiddleware(async (auth, request) => {
   if (request.nextUrl.pathname === "/") {

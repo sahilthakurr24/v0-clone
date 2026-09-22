@@ -1,6 +1,6 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
+import { UserButton } from "@repo/auth/buttons";
 import Link from "next/link";
 import { V0CloneLogo } from "@/components/brand/v0-clone-logo";
 

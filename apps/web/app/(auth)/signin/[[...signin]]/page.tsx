@@ -1,4 +1,4 @@
-import { SignIn } from "@clerk/nextjs";
+import { SignIn } from "@repo/auth/buttons";
 
 export default function SignInPage() {
   return (
