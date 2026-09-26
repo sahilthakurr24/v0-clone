@@ -7,6 +7,7 @@
     "./functions" : "./functions/index.ts"
   },
   "devDependencies": {
+    "@repo/sandbox" : "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "typescript": "^5.9.3"

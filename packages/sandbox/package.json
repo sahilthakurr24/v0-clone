@@ -2,10 +2,14 @@
     "name": "@repo/sandbox",
     "version": "1.0.0",
     "private": "true",
+    "expots" : {
+        "." : "index.ts"
+    },
     "script": {
         "build:sandbox": "tsx build.ts"
     },
     "dependencies": {
+        "@e2b/code-interpreter": "^2.8.0",
         "dotenv": "^17.4.2",
         "e2b": "^2.51.0",
         "zod": "^4.6.5"
