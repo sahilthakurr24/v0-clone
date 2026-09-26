@@ -55,7 +55,7 @@ class ProjectService {
       return createdMessage.id;
     });
 
-    return messageId;
+    return { messageId };
 
     //todo inngest function invoke krege
   }
@@ -81,7 +81,7 @@ class ProjectService {
       messages: result.map((row) => row.message).filter((message) => message !== null),
     };
 
-    return project;
+    return { project };
   }
 
   public async getAllProjects(payload: GetAllProjectsSchemaType) {
@@ -91,18 +91,45 @@ class ProjectService {
       throw new Error("User not found");
     }
 
-    const allProjects = await db
-      .select()
+    const result = await db
+      .select({ projects, messages })
       .from(projects)
       .leftJoin(messages, eq(messages.projectId, projects.id))
       .where(eq(projects.userId, user.id))
       .orderBy(desc(projects.createdAt));
 
-    if (allProjects.length === 0) {
+    const groupProjects = result.reduce(
+      (acc, curr) => {
+        const projectId = curr.projects.id as string;
+
+        if (!acc[projectId]) {
+          acc[projectId] = {
+            ...curr.projects,
+            messages: [],
+          };
+        }
+
+        if (curr.messages) {
+          acc[projectId].messages.push(curr.messages);
+        }
+
+        return acc;
+      },
+      {} as Record<
+        string,
+        typeof projects.$inferSelect & {
+          messages: (typeof messages.$inferSelect)[];
+        }
+      >,
+    );
+
+    const formattedProjects = Object.values(groupProjects);
+
+    if (formattedProjects.length === 0) {
       throw new Error("No Projects found");
     }
 
-    return allProjects;
+    return { formattedProjects };
   }
 }
 

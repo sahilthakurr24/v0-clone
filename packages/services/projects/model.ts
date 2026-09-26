@@ -6,8 +6,6 @@ export const messageTypeEnum = z.enum(["RESULT", "ERROR"]);
 
 const messageSchema = z.object({
   content: z.string().describe("Content of the message"),
-  role: messageRoleEnum,
-  type: messageTypeEnum,
 });
 
 export const createProjectSchema = z.object({
