@@ -1,4 +1,4 @@
-import { processTask } from "./test-function";
+import { processTask } from "./function";
 
 
 export const functions = [processTask];
