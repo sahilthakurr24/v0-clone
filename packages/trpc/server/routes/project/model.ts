@@ -9,7 +9,7 @@ export const createProjectInputSchema = z.object({
 });
 
 export const createProjectOutputSchema = z.object({
-  messageId: z.string().describe("Message id of the created project"),
+  projectId: z.string().describe("Message id of the created project"),
 });
 
 export const getProjectByIdInputSchema = z.object({

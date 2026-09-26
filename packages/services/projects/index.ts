@@ -23,7 +23,7 @@ class ProjectService {
       throw new Error("User not found!");
     }
 
-    const messageId = await db.transaction(async (tx) => {
+    const projectId = await db.transaction(async (tx) => {
       // Create project
       const [createdProject] = await tx
         .insert(projects)
@@ -52,10 +52,10 @@ class ProjectService {
         throw new Error("Failed to create message");
       }
 
-      return createdMessage.id;
+      return createdProject.id;
     });
 
-    return { messageId };
+    return { projectId };
 
     //todo inngest function invoke krege
   }

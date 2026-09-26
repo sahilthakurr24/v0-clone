@@ -21,8 +21,8 @@ export const projectRouter = router({
     .mutation(async ({ ctx, input }) => {
       const message = input.message;
       const clerkId = ctx.clerkId;
-      const { messageId } = await projectService.createProject({ clerkId, message });
-      return { messageId };
+      const { projectId } = await projectService.createProject({ clerkId, message });
+      return { projectId };
     }),
 
   getProjectById: authenticatedProcedure

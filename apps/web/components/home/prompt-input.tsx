@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUp, ChevronDown, RefreshCw } from "lucide-react";
+import { ChevronDown, RefreshCw, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,30 +12,30 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
-import { Spinner } from "@/components/ui/spinner";
 
 import {
   getRandomPromptTemplate,
   promptTemplateCategories,
 } from "@/components/home/prompt-templates";
+import { useCreateProject } from "@/hooks/api/project";
 // import { useCreateProject } from "@/features/projects/hooks/projects";
 
 export function PromptInput() {
   const [prompt, setPrompt] = useState("");
   const router = useRouter();
-//   const { mutate: createProject, isPending } = useCreateProject();
+  const { createProjectAsync, isPending } = useCreateProject();
 
-  function handleSubmit() {
-    // createProject(prompt, {
-    //   onSuccess: (project) => {
-    //     router.push(`/projects/${project.id}`);
-    //   },
-    //   onError: (error) => {
-    //     toast.error(error.message);
-    //   }
-    // })
-
-    console.log("submittd");
+  async function handleSubmit() {
+    try {
+      const { projectId } = await createProjectAsync({ message: { content: prompt } });
+      router.push(`/projects/${projectId}`);
+      console.log("submittd");
+    } catch (error) {
+      toast.error("Failed to create project");
+      console.error(error);
+    } finally {
+      setPrompt("");
+    }
   }
 
   /**
@@ -68,6 +68,7 @@ export function PromptInput() {
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();
               handleSubmit();
+              setPrompt("");
             }
           }}
         />
@@ -98,17 +99,17 @@ export function PromptInput() {
               {category.name}
             </p>
             <div className="flex flex-wrap gap-2">
-              {category.templates.map(({ label, icon: Icon, prompt: templatePrompt }) => (
+              {category.templates.map(({ label, prompt: templatePrompt }) => (
                 <Button
                   key={label}
                   type="button"
                   variant="outline"
                   size="sm"
                   className="rounded-full"
-                  // disabled={isPending}
+                  disabled={isPending}
                   onClick={() => applySuggestion(templatePrompt)}
                 >
-                  <Icon />
+                  <ArrowUp />
                   {label}
                 </Button>
               ))}
