@@ -29,7 +29,6 @@ export function PromptInput() {
     try {
       const { projectId } = await createProjectAsync({ message: { content: prompt } });
       router.push(`/projects/${projectId}`);
-      console.log("submittd");
     } catch (error) {
       toast.error("Failed to create project");
       console.error(error);

@@ -2,7 +2,7 @@ import express from "express";
 import { logger } from "@repo/logger";
 import cors from "cors";
 import { clerkMiddleware } from "@repo/auth/express";
-import {getAuth} from "@repo/auth/express"
+import { getAuth } from "@repo/auth/express";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { generateOpenApiDocument, createOpenApiExpressMiddleware } from "trpc-to-openapi";
 import { apiReference } from "@scalar/express-api-reference";
@@ -32,15 +32,15 @@ if (env.NODE_ENV !== "prod") {
 app.use(express.json());
 
 //inngest route
-app.use("/api/inngest", serve({ client: inngest, functions }));
+app.use("/api/inngest", express.json({ limit: "10mb" }), serve({ client: inngest, functions }));
 // clerk middleware
 app.use(clerkMiddleware());
 
-app.get('/get-user', (req, res)=>{
-  const {userId} = getAuth(req);
+app.get("/get-user", (req, res) => {
+  const { userId } = getAuth(req);
   console.log("no tRpc:", userId);
-  res.send({staus : 200, message : userId});
-})
+  res.send({ staus: 200, message: userId });
+});
 
 app.get("/", (req, res) => {
   return res.json({ message: "Streamyst is up and running..." });

@@ -1,4 +1,4 @@
-import { processTask } from "./function";
+import { codeAgentFunction, processTask } from "./function";
 
 
-export const functions = [processTask];
+export const functions = [processTask, codeAgentFunction];

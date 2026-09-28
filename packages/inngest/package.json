@@ -2,17 +2,20 @@
   "name": "@repo/inngest",
   "version": "1.0.0",
   "private": "true",
-  "exports" : {
-    "." : "./index.ts",
-    "./functions" : "./functions/index.ts"
+  "exports": {
+    ".": "./index.ts",
+    "./functions": "./functions/index.ts"
   },
   "devDependencies": {
-    "@repo/sandbox" : "workspace:*",
+    "@repo/database": "workspace:*",
     "@repo/eslint-config": "workspace:*",
+    "@repo/sandbox": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "inngest": "^4.20.0"
+    "@inngest/agent-kit": "^0.13.2",
+    "inngest": "^4.20.0",
+    "zod": "^4.6.5"
   }
 }

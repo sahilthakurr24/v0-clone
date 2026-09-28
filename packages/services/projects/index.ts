@@ -9,6 +9,7 @@ import {
   GetProjectByIdSchemaType,
 } from "./model";
 import { messages, projects, users } from "@repo/database/schema";
+import { inngest } from "@repo/inngest";
 
 class ProjectService {
   private async getUserByClerkId(clerkId: string) {
@@ -55,9 +56,16 @@ class ProjectService {
       return createdProject.id;
     });
 
-    return { projectId };
+    //sending the event to inngest
+    await inngest.send({
+      name: "code-agent/run",
+      data: {
+        projectId,
+        prompt: message.content,
+      },
+    });
 
-    //todo inngest function invoke krege
+    return { projectId };
   }
 
   public async getProjectById(payload: GetProjectByIdSchemaType) {
