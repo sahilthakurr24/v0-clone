@@ -1,4 +1,5 @@
 import { httpLink, httpBatchStreamLink } from "@repo/trpc/client";
+import superjson from "superjson";
 import { env } from "~/env.js";
 
 export const createTRPCHttpBatchClientClient = (opts?: {
@@ -11,6 +12,8 @@ export const createTRPCHttpBatchClientClient = (opts?: {
 
   return c({
     url: env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/trpc",
+
+    transformer: superjson,
 
     headers: async () => {
       const token = (await opts?.getToken?.()) ?? null;

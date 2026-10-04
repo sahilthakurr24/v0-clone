@@ -28,3 +28,5 @@ export const messages = pgTable("messages", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
+export type MessageRoleEnum =  (typeof messages.role);

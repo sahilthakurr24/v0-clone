@@ -1,9 +1,9 @@
-import React from 'react'
+import { ProjectView } from "@/components/projects/project-view";
+import React from "react";
 
-function Project() {
-  return (
-    <div>Project haha </div>
-  )
+export async function Project({ params }: { params: Promise<{ id: string }> }) {
+  const {id} = await params;
+  return <ProjectView projectId= {id}/>
 }
 
-export default Project
+export default Project;

@@ -1,4 +1,5 @@
 import { pgTable, text, timestamp, uuid, jsonb } from "drizzle-orm/pg-core";
+import { InferSelectModel } from "drizzle-orm";
 
 import { messages } from "./message";
 
@@ -25,3 +26,5 @@ export const fragments = pgTable("fragments", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
+export type FragementType = InferSelectModel<typeof fragments>;
