@@ -6,6 +6,7 @@ import {
   getMessagesSchemaType,
 } from "./model";
 import { fragments, messages } from "@repo/database/schema";
+import { inngest } from "@repo/inngest";
 
 class MessageService {
   //create message
@@ -20,11 +21,20 @@ class MessageService {
         role: "USER",
         type: "RESULT",
       })
-      .returning({ id: messages.id });
+      .returning({ id: messages.id, content: messages.content });
 
-    if (!newMessage?.id) throw new Error("Unable to create a mesage");
+    if (!newMessage?.id || !newMessage.content) throw new Error("Unable to create a mesage");
 
-    return { id : newMessage.id};
+    //sending event to the inngest
+    await inngest.send({
+      name: "code-agent/run",
+      data: {
+        projectId,
+        prompt: newMessage.content,
+      },
+    });
+
+    return { id: newMessage.id };
   }
 
   public async getMessages(payload: getMessagesSchemaType) {
@@ -37,7 +47,7 @@ class MessageService {
       .leftJoin(fragments, eq(fragments.messageId, messages.id))
       .orderBy(asc(messages.updatedAt));
 
-    if (!mess) throw new Error("Unable to get the mess");
+    if (!mess) throw new Error("Unable to get the message");
 
     const formatedMess = mess.filter((row) => {
       if (row.fragment !== null) {
@@ -45,7 +55,7 @@ class MessageService {
       }
     });
 
-    return {formatedMess};
+    return { formatedMess };
   }
 }
 

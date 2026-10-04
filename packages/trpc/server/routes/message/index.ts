@@ -1,6 +1,7 @@
 import { messageService } from "../../services";
 import { authenticatedProcedure, router } from "../../trpc";
 import { generatePath } from "../../utils/path-generator";
+
 import {
   createMessageInputSchema,
   createMessageOutputSchema,
