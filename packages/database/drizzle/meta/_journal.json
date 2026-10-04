@@ -8,6 +8,13 @@
       "when": 1789990344293,
       "tag": "0000_good_tiger_shark",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791122979361,
+      "tag": "0001_soft_onslaught",
+      "breakpoints": true
     }
   ]
 }

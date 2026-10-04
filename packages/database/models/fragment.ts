@@ -15,6 +15,7 @@ export const fragments = pgTable("fragments", {
 
   sandboxUrl: text("sandbox_url").notNull(),
 
+  sandboxId: text("sandbox_id").notNull(),
   title: text("title").notNull(),
 
   files: jsonb("files").notNull(),

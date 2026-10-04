@@ -1,0 +1,1 @@
+ALTER TABLE "fragments" ADD COLUMN "sandbox_id" text NOT NULL;

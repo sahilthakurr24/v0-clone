@@ -1,6 +1,6 @@
 import { inngest } from "../index";
 import { Sandbox } from "@repo/sandbox";
-import { asc, db, eq } from "@repo/database";
+import { asc, db, desc, eq } from "@repo/database";
 import { fragments, messages } from "@repo/database/schema";
 import { createAgent, createNetwork, createState, createTool } from "@inngest/agent-kit";
 import { FRAGMENT_TITLE_PROMPT, PROMPT, RESPONSE_PROMPT } from "../prompt";
@@ -35,10 +35,25 @@ export const codeAgentFunction = inngest.createFunction(
   async ({ event, step }) => {
     //step1
     const sandboxId = await step.run("get-sandbox-id", async () => {
+      const previousMessage = await db
+        .select({
+          sandboxId: fragments.sandboxId,
+        })
+        .from(messages)
+        .innerJoin(fragments, eq(messages.id, fragments.messageId))
+        .where(eq(messages.projectId, event.data.projectId))
+        .orderBy(desc(messages.createdAt))
+        .limit(1);
+
+      if (previousMessage[0]?.sandboxId) {
+        return previousMessage[0].sandboxId;
+      }
+
       const sandbox = await Sandbox.create({
         template: "52sqtnv3xxthx7pozcv4",
-        timeoutMs : 30 * 60 * 1000,
+        timeoutMs: 30 * 60 * 1000,
       });
+
       return sandbox.sandboxId;
     });
     //step2
@@ -91,7 +106,6 @@ export const codeAgentFunction = inngest.createFunction(
 
               return result.stdout;
             } catch (error) {
-             
               return `Command failed: ${error} \n stdout: ${buffers.stdout}\n stderr: ${buffers.stderr}`;
             }
           },
@@ -161,7 +175,6 @@ export const codeAgentFunction = inngest.createFunction(
       ],
       lifecycle: {
         onResponse: async ({ result, network }) => {
-         
           const lastAssistantMessageText = lastAssistantTextMessageContent(result);
 
           if (lastAssistantMessageText && network) {
@@ -190,7 +203,7 @@ export const codeAgentFunction = inngest.createFunction(
     });
 
     const result = await network.run(event.data.prompt, { state });
-   
+
     const { summary, files } = result.state.data;
 
     //create an agent to generate the name for the fragment
@@ -219,17 +232,15 @@ export const codeAgentFunction = inngest.createFunction(
     const isError =
       !result.state.data.summary || Object.keys(result.state.data.files || {}).length === 0;
 
-  
     const sandboxUrl = await step.run("get-sandbox-url", async () => {
       try {
         const sandbox = await Sandbox.connect(sandboxId);
         console.log("alive");
         return `https://${sandbox.getHost(3000)}`;
       } catch (e) {
-        console.log("dead:", e); 
-        return `Sandbox url not available`
-        
-      };
+        console.log("dead:", e);
+        return `Sandbox url not available`;
+      }
     });
 
     await step.run("save-result", async () => {
@@ -256,6 +267,7 @@ export const codeAgentFunction = inngest.createFunction(
         if (!message) return;
 
         await tx.insert(fragments).values({
+          sandboxId: sandboxId,
           sandboxUrl,
           title: fragmentTitle,
           files,
