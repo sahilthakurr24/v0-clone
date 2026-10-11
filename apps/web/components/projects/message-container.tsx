@@ -9,6 +9,7 @@ import MessageCard from "./message-card";
 import MessageForm from "./message-form";
 import MessageLoading from "./message-loader";
 import { trpc } from "@/trpc/client";
+import { Code2, LoaderCircle } from "lucide-react";
 
 type MessageItem = NonNullable<ReturnType<typeof useGetMessages>["data"]>[number];
 type RawFragment = NonNullable<MessageItem["fragment"]>;
@@ -39,16 +40,24 @@ export default function MessageContainer({
   projectId,
   activeFragment,
   setActiveFragment,
+  onGeneratingChange,
 }: {
   projectId: string;
   activeFragment: ProjectFragment | null;
   setActiveFragment: (fragment: ProjectFragment | null) => void;
+  onGeneratingChange: (isGenerating: boolean) => void;
 }) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const lastAssistantMessageIdRef = useRef<string | null>(null);
   const utils = trpc.useUtils();
 
   const { data: messages, isPending, isError, error } = useGetMessages({ projectId });
+  const lastMessage = messages?.[messages.length - 1];
+  const isLastMessageUser = lastMessage?.message.role === "USER";
+
+  useEffect(() => {
+    onGeneratingChange(isLastMessageUser);
+  }, [isLastMessageUser, onGeneratingChange]);
 
   useEffect(() => {
     if (projectId) {
@@ -65,7 +74,9 @@ export default function MessageContainer({
     if (!messages) return;
 
     // Each item is shaped { message, fragment }
-    const latest = messages.findLast((m) => m.message.role === "ASSISTANT" && m.fragment);
+    const latest = [...messages]
+      .reverse()
+      .find((m) => m.message.role === "ASSISTANT" && m.fragment);
 
     // 1. New assistant message with a fragment -> select it
     if (latest?.fragment && latest.message.id !== lastAssistantMessageIdRef.current) {
@@ -121,12 +132,9 @@ export default function MessageContainer({
     );
   }
 
-  const lastMessage = messages[messages.length - 1];
-  const isLastMessageUser = lastMessage?.message.role === "USER";
-
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 pt-3">
         {messages.map((message) => (
           <MessageCard
             key={message.message.id}
@@ -143,9 +151,51 @@ export default function MessageContainer({
         <div ref={bottomRef} />
       </div>
 
-      <div className="relative p-2 pt-1">
-        <div className="pointer-events-none absolute -top-6 left-0 right-0 h-6 bg-gradient-to-b from-transparent to-background" />
-        <MessageForm projectId={projectId} />
+      <section className="shrink-0 border-t bg-background px-4 py-3" aria-live="polite">
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-xs font-medium">Project files</h2>
+          {activeFragment && (
+            <span className="text-[11px] text-muted-foreground">
+              {Object.keys(activeFragment.files).length} files
+            </span>
+          )}
+        </div>
+        {isLastMessageUser && (
+          <div className="mb-2 flex items-center gap-2 text-xs text-primary">
+            <LoaderCircle className="size-3.5 animate-spin" />
+            <span>Agent is working on your request</span>
+          </div>
+        )}
+        {activeFragment && Object.keys(activeFragment.files).length > 0 ? (
+          <ul className="flex max-h-20 flex-wrap gap-1 overflow-y-auto">
+            {Object.keys(activeFragment.files)
+              .slice(0, 8)
+              .map((path) => (
+                <li
+                  key={path}
+                  className="inline-flex max-w-full items-center gap-1.5 rounded border bg-muted/50 px-2 py-1 font-mono text-[10px] text-muted-foreground"
+                >
+                  <Code2 className="size-3 shrink-0" />
+                  <span className="truncate">{path}</span>
+                </li>
+              ))}
+            {Object.keys(activeFragment.files).length > 8 && (
+              <li className="px-1 py-1 text-[10px] text-muted-foreground">
+                +{Object.keys(activeFragment.files).length - 8} more
+              </li>
+            )}
+          </ul>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            {isLastMessageUser
+              ? "Files will appear when the first build is ready."
+              : "Generated files will appear here."}
+          </p>
+        )}
+      </section>
+
+      <div className="shrink-0 p-3 pt-1">
+        <MessageForm projectId={projectId} isGenerating={isLastMessageUser} />
       </div>
     </div>
   );

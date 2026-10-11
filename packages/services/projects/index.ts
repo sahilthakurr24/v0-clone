@@ -24,7 +24,7 @@ class ProjectService {
       throw new Error("User not found!");
     }
 
-    const projectId = await db.transaction(async (tx) => {
+    const { projectId, messageId } = await db.transaction(async (tx) => {
       // Create project
       const [createdProject] = await tx
         .insert(projects)
@@ -53,7 +53,7 @@ class ProjectService {
         throw new Error("Failed to create message");
       }
 
-      return createdProject.id;
+      return { projectId: createdProject.id, messageId: createdMessage.id };
     });
 
     //sending the event to inngest
@@ -61,6 +61,7 @@ class ProjectService {
       name: "code-agent/run",
       data: {
         projectId,
+        messageId,
         prompt: message.content,
       },
     });

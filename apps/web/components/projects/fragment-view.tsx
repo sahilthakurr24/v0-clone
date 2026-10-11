@@ -14,7 +14,13 @@ import type { ProjectFragment } from "@/features/lib/fragment-types";
  *
  * @param data - The fragment to preview (provides `sandboxUrl` and `title`).
  */
-export default function FragmentWeb({ data }: { data: ProjectFragment }) {
+export default function FragmentWeb({
+  data,
+  isGenerating = false,
+}: {
+  data: ProjectFragment;
+  isGenerating?: boolean;
+}) {
   const [fragmentKey, setFragmentKey] = useState(0);
   const [copied, setCopied] = useState(false);
 
@@ -38,20 +44,16 @@ export default function FragmentWeb({ data }: { data: ProjectFragment }) {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="flex items-center gap-x-2 border-b bg-sidebar p-2">
+      <div className="flex h-11 shrink-0 items-center gap-2 border-b bg-muted/20 px-3">
         <Hint text="Refresh" side="bottom" align="start">
-          <Button size="sm" variant="outline" onClick={onRefresh}>
-            <RefreshCcw />
+          <Button size="icon-sm" variant="ghost" onClick={onRefresh} aria-label="Refresh preview">
+            <RefreshCcw className="size-4" />
           </Button>
         </Hint>
-        <Hint
-          text={copied ? "Copied" : "Click to copy"}
-          side="bottom"
-          align="start"
-        >
+        <Hint text={copied ? "Copied" : "Click to copy"} side="bottom" align="start">
           <Button
             size="sm"
-            variant="outline"
+            variant="ghost"
             onClick={onCopy}
             disabled={!data.sandboxUrl || copied}
             className="flex-1 justify-start text-start font-normal"
@@ -62,8 +64,9 @@ export default function FragmentWeb({ data }: { data: ProjectFragment }) {
 
         <Hint text="Open in new tab" side="bottom" align="start">
           <Button
-            size="sm"
-            variant="outline"
+            size="icon-sm"
+            variant="ghost"
+            aria-label="Open preview in a new tab"
             onClick={() => {
               if (!data.sandboxUrl) return;
               window.open(data.sandboxUrl, "_blank");
@@ -72,11 +75,23 @@ export default function FragmentWeb({ data }: { data: ProjectFragment }) {
             <ExternalLink />
           </Button>
         </Hint>
+        <div className="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground">
+          {isGenerating ? (
+            <>
+              <span className="size-1.5 animate-pulse rounded-full bg-primary" />
+              Updating
+            </>
+          ) : (
+            <>
+              <span className="size-1.5 rounded-full bg-emerald-500" />
+              Live preview
+            </>
+          )}
+        </div>
       </div>
       <iframe
         key={fragmentKey}
-        className="h-full w-full"
-        sandbox="allow-scripts allow-same-origin"
+        className="min-h-0 flex-1 bg-white pointer-events-auto"
         loading="lazy"
         src={data.sandboxUrl}
         title={data.title}

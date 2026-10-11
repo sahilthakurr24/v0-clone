@@ -21,7 +21,13 @@ const MAX_LENGTH = 1000;
  *
  * @param projectId - The project the message is sent to.
  */
-export default function MessageForm({ projectId }: { projectId: string }) {
+export default function MessageForm({
+  projectId,
+  isGenerating = false,
+}: {
+  projectId: string;
+  isGenerating?: boolean;
+}) {
   const [content, setContent] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const { createMessageAsync, isPending } = useCreateMessage();
@@ -58,22 +64,24 @@ export default function MessageForm({ projectId }: { projectId: string }) {
         void onSubmit();
       }}
       className={cn(
-        "relative rounded-xl border bg-sidebar p-4 pt-1 transition-all dark:bg-sidebar",
-        isFocused && "shadow-lg ring-2 ring-primary/20",
+        "relative rounded-lg border bg-background p-3 transition-all",
+        isFocused && "ring-2 ring-ring/20",
       )}
     >
       <TextareaAutosize
         value={content}
         onChange={(event) => setContent(event.target.value)}
-        disabled={isPending}
-        placeholder="Describe what you want to create..."
+        disabled={isPending || isGenerating}
+        placeholder={
+          isGenerating ? "The agent is working..." : "Ask for a change or describe what to build..."
+        }
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         minRows={3}
         maxRows={8}
         className={cn(
-          "w-full resize-none border-none bg-transparent pt-4 outline-none",
-          isPending && "opacity-50",
+          "w-full resize-none border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground/80",
+          (isPending || isGenerating) && "opacity-50",
         )}
         onKeyDown={(event) => {
           if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
@@ -91,11 +99,11 @@ export default function MessageForm({ projectId }: { projectId: string }) {
           &nbsp; to submit
         </div>
         <Button
-          className={cn("size-8 rounded-full", isPending && "border bg-muted-foreground")}
-          disabled={isPending || !content.trim()}
+          className="size-8 rounded-md"
+          disabled={isPending || isGenerating || !content.trim()}
           type="submit"
         >
-          {isPending ? <Spinner /> : <ArrowUpIcon className="size-4" />}
+          {isPending || isGenerating ? <Spinner /> : <ArrowUpIcon className="size-4" />}
         </Button>
       </div>
     </form>

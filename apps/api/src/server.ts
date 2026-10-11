@@ -29,10 +29,9 @@ if (env.NODE_ENV !== "prod") {
   );
 }
 
-app.use(express.json());
-
 //inngest route
-app.use("/api/inngest", express.json({ limit: "10mb" }), serve({ client: inngest, functions }));
+app.use("/api/inngest", express.json({ limit: "10mb"}), serve({ client: inngest, functions }));
+app.use(express.json());
 // clerk middleware
 app.use(clerkMiddleware());
 

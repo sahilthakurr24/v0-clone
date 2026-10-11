@@ -30,6 +30,7 @@ class MessageService {
       name: "code-agent/run",
       data: {
         projectId,
+        messageId: newMessage.id,
         prompt: newMessage.content,
       },
     });
@@ -45,17 +46,11 @@ class MessageService {
       .from(messages)
       .where(eq(messages.projectId, projectId))
       .leftJoin(fragments, eq(fragments.messageId, messages.id))
-      .orderBy(asc(messages.updatedAt));
+      .orderBy(asc(messages.createdAt));
 
     if (!mess) throw new Error("Unable to get the message");
 
-    const formatedMess = mess.filter((row) => {
-      if (row.fragment !== null) {
-        return row;
-      }
-    });
-
-    return { formatedMess };
+    return { formatedMess: mess };
   }
 }
 

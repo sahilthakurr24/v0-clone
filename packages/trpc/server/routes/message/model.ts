@@ -12,26 +12,27 @@ export const getMessagesInputSchema = z.object({
 });
 
 export const getMessagesOutputSchema = z.array(
-    z.object({
-      message: z.object({
+  z.object({
+    message: z.object({
+      id: z.string(),
+      content: z.string(),
+      role: z.enum(["USER", "ASSISTANT"]),
+      type: z.enum(["RESULT", "ERROR"]),
+      projectId: z.string(),
+      createdAt: z.date(),
+      updatedAt: z.date(),
+    }),
+    fragment: z
+      .object({
         id: z.string(),
-        content: z.string(),
-        role: z.enum(["USER", "ASSISTANT"]),
-        type: z.enum(["RESULT", "ERROR"]),
-        projectId: z.string(),
+        messageId: z.string(),
+        sandboxId: z.string(),
+        sandboxUrl: z.string(),
+        title: z.string(),
+        files: z.unknown(),
         createdAt: z.date(),
         updatedAt: z.date(),
-      }),
-      fragment: z
-        .object({
-          id: z.string(),
-          messageId: z.string(),
-          sandboxUrl: z.string(),
-          title: z.string(),
-          files: z.unknown(),
-          createdAt: z.date(),
-          updatedAt: z.date(),
-        })
-        .nullable(),
-    })
-  );
+      })
+      .nullable(),
+  }),
+);

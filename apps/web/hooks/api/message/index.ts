@@ -22,8 +22,13 @@ export function useCreateMessage() {
 }
 
 export function useGetMessages(input: Parameters<typeof trpc.message.getMessages.useQuery>[0]) {
-  const { data, error, isError, isPending, isSuccess, status } =
-    trpc.message.getMessages.useQuery(input);
+  const { data, error, isError, isPending, isSuccess, status } = trpc.message.getMessages.useQuery(
+    input,
+    {
+      refetchInterval: 1500,
+      refetchIntervalInBackground: true,
+    },
+  );
 
   return { data, error, isError, isPending, isSuccess, status };
 }
